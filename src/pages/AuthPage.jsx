@@ -63,6 +63,7 @@ export default function AuthPage({ startAsSignup = false }) {
                 setBirthday('');
                 setPhoneNumber('');
                 setIsLogin(true);
+                setPassword('')
             }
         } catch (err) {
             setError(err.response?.data?.error || 'Authentication Failed');
