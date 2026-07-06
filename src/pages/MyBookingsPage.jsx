@@ -39,7 +39,8 @@ export default function MyBookingsPage() {
     };
 
     const handleEdit = (booking) => {
-        navigate('/bookings', { state: { editBooking: booking } });
+        localStorage.setItem('editingBooking', JSON.stringify(booking));
+        navigate('/bookings');
     };
 
     return (

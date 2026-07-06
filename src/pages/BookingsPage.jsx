@@ -28,14 +28,25 @@ export default function BookingsPage() {
     useEffect(() => {
         const token = localStorage.getItem('token');
         const decoded = jwtDecode(token);
-        setEmail(decoded.email); //decode the token and set email automatically
+        setEmail(decoded.email);
+
+
+        const editingBooking = localStorage.getItem('editingBooking');
+        if (editingBooking) {
+            const booking = JSON.parse(editingBooking);
+            setEditingId(booking.id);
+            setTitle(booking.title);
+            setDescription(booking.description);
+            setDate(booking.date);
+            setTime(booking.time);
+            setPhoneNumber(booking.phone_number);
+            setRestaurantId(booking.restaurant_id);
+            localStorage.removeItem('editingBooking');
+        }
 
         fetchBookings();
         fetchRestaurants();
-
-
     }, []);
-
     const fetchRestaurants = async () => {
         try {
             const res = await axios.get('https://restaurant-backend-production-3168.up.railway.app/restaurants');
