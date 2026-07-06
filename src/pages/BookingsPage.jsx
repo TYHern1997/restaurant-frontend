@@ -6,11 +6,9 @@ import AppNavBar from "../components/NavBar"
 import BookingList from "../components/BookingList";
 import BookingForm from "../components/BookingForm";
 import { jwtDecode } from "jwt-decode";
-import { useLocation, useNavigate } from "react-router-dom";
 
 export default function BookingsPage() {
     const navigate = useNavigate();
-    const location = useLocation();
     const [restaurants, setRestaurants] = useState([]);
 
     const [bookings, setBookings] = useState([])
@@ -28,7 +26,6 @@ export default function BookingsPage() {
 
 
     useEffect(() => {
-        const navigate = useNavigate();
         const token = localStorage.getItem('token');
         const decoded = jwtDecode(token);
         setEmail(decoded.email); //decode the token and set email automatically
@@ -36,14 +33,8 @@ export default function BookingsPage() {
         fetchBookings();
         fetchRestaurants();
 
-        // Check if arrived with edit payload from the dashboard
-        if (location.state && location.state.editBooking) {
-            handleEdit(location.state.editBooking);
 
-
-            window.history.replaceState({}, document.title);
-        }
-    }, [location]);
+    }, []);
 
     const fetchRestaurants = async () => {
         try {
@@ -126,8 +117,12 @@ export default function BookingsPage() {
             setRestaurantId("");
             setEditingId(null);
 
+            const token = localStorage.getItem('token');// re-set email clearing 
+            const decoded = jwtDecode(token);
+            setEmail(decoded.email);
 
-            fetchBookings(); // refresh list
+
+            fetchBookings(); // refresh
         } catch (err) {
             setError(err.response?.data?.error || "Something went wrong");
         }
