@@ -95,7 +95,12 @@ export default function BookingsPage() {
 
         try {
             if (editingId) {
-                console.log('editingId:', editingId);
+                console.log('Sending PUT with:', {
+                    title, description, date, time,
+                    phone_number: phoneNumber,
+                    email, restaurant_id: restaurantId,
+                    user_id: decoded.id
+                });
                 // if editing send PUT request
                 await axios.put(`https://restaurant-backend-production-3168.up.railway.app/bookings/${editingId}`, {
                     title, description, date, time,
