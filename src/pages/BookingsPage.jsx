@@ -94,6 +94,7 @@ export default function BookingsPage() {
 
 
         try {
+            const formattedDate = new Date(date).toISOString().split('T')[0];
             if (editingId) {
                 console.log('Sending PUT with:', {
                     title, description, date, time,
@@ -101,9 +102,9 @@ export default function BookingsPage() {
                     email, restaurant_id: restaurantId,
                     user_id: decoded.id
                 });
-                // if editing send PUT request
+
                 await axios.put(`https://restaurant-backend-production-3168.up.railway.app/bookings/${editingId}`, {
-                    title, description, date, time,
+                    title, description, date: formattedDate, time,
                     phone_number: phoneNumber,
                     email, restaurant_id: restaurantId,
                     user_id: decoded.id
@@ -114,9 +115,9 @@ export default function BookingsPage() {
                 setTimeout(() => setSuccess(''), 3000);
                 navigate('/my-bookings');
             } else {
-                // if new booking, send POST request
+
                 await axios.post("https://restaurant-backend-production-3168.up.railway.app/bookings", {
-                    title, description, date, time,
+                    title, description, date: formattedDate, time,
                     phone_number: phoneNumber,
                     email, restaurant_id: restaurantId,
                     user_id: decoded.id
@@ -136,10 +137,9 @@ export default function BookingsPage() {
             setRestaurantId("");
             setEditingId(null);
 
-            const token = localStorage.getItem('token');// re-set email clearing 
-            const decoded = jwtDecode(token);
-            setEmail(decoded.email);
-
+            // const token = localStorage.getItem('token')
+            const freshDecoded = jwtDecode(localStorage.getItem('token'));
+            setEmail(freshDecoded.email);
 
             fetchBookings(); // refresh
         } catch (err) {
