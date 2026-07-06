@@ -6,7 +6,7 @@ import AppNavBar from "../components/NavBar"
 import BookingList from "../components/BookingList";
 import BookingForm from "../components/BookingForm";
 import { jwtDecode } from "jwt-decode";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function BookingsPage() {
     const navigate = useNavigate();
@@ -28,6 +28,7 @@ export default function BookingsPage() {
 
 
     useEffect(() => {
+        const navigate = useNavigate();
         const token = localStorage.getItem('token');
         const decoded = jwtDecode(token);
         setEmail(decoded.email); //decode the token and set email automatically
@@ -35,11 +36,11 @@ export default function BookingsPage() {
         fetchBookings();
         fetchRestaurants();
 
-        // Check if we arrived here with an edit payload from the dashboard
+        // Check if arrived with edit payload from the dashboard
         if (location.state && location.state.editBooking) {
             handleEdit(location.state.editBooking);
 
-            // Clean up window history state so refreshing doesn't lock you in edit mode
+
             window.history.replaceState({}, document.title);
         }
     }, [location]);
@@ -101,6 +102,7 @@ export default function BookingsPage() {
                 });
                 setSuccess("Booking updated successfully!");
                 setTimeout(() => setSuccess(''), 3000);
+                navigate('/my-bookings');
             } else {
                 // if new booking, send POST request
                 await axios.post("https://restaurant-backend-production-3168.up.railway.app/bookings", {
