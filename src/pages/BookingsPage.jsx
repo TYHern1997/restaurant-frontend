@@ -84,16 +84,19 @@ export default function BookingsPage() {
 
         const selectedDate = new Date(date);
         const today = new Date();
-        today.setHours(0, 0, 0, 0); // Clear time for accurate day comparison
+        today.setHours(0, 0, 0, 0);
         if (selectedDate < today) {
             setError("You cannot pick a date in the past.");
             setTimeout(() => setError(''), 3000);
             return;
         }
 
+
+
         try {
             if (editingId) {
-                // if editing, send PUT request
+                console.log('editingId:', editingId);
+                // if editing send PUT request
                 await axios.put(`https://restaurant-backend-production-3168.up.railway.app/bookings/${editingId}`, {
                     title, description, date, time,
                     phone_number: phoneNumber,

@@ -42,14 +42,14 @@ export default function BookingForm({
                 {editingId ? "Update Booking" : "Make a Booking"}
             </h2>
             <Form onSubmit={(e) => { e.preventDefault(); handleSubmit(e); }}>
-                {/* success and error messages */}
+
                 {error && (
-                    <Alert variant="danger" dismissible onClose={() => setError('')}>
+                    <Alert variant="danger">
                         {error}
                     </Alert>
                 )}
                 {success && (
-                    <Alert variant="success" dismissible onClose={() => setSuccess('')}>
+                    <Alert>
                         {success}
                     </Alert>
                 )}
