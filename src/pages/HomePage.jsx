@@ -1,8 +1,11 @@
 import AppNavBar from "../components/NavBar"
 import HeroSection from "../components/HeroSection"
-import { Container, Row, Col, Card } from "react-bootstrap"
+import { Container, Row } from "react-bootstrap"
 import { useEffect, useState } from "react"
 import axios from "axios"
+import RestaurantCard from "../components/RestaurantCard";
+import RestaurantMap from "../components/RestaurantMap";
+
 
 export default function HomePage() {
     const [restaurants, setRestaurants] = useState([])
@@ -30,40 +33,20 @@ export default function HomePage() {
             <HeroSection />
 
             <Container className="my-5">
-                <h2 className="text-center mb-4">Our Restaurants</h2>
+                <h2 className="text-center mb-4 mt-5">Find Us</h2>
+                {/* <RestaurantMap restaurants={restaurants} /> */}
+                <br />
                 {loading ? (
                     <p className="text-center">Loading restaurants...</p>
                 ) : (
                     <Row>
                         {restaurants.map((restaurant) => (
-                            <Col sm={4} key={restaurant.id} className="mb-4">
-                                <Card className="h-100 shadow-sm">
-                                    <Card.Body>
-                                        <Card.Title>
-                                            {restaurant.name}
-                                        </Card.Title>
-                                        <Card.Text>
-                                            <strong>Cuisine:</strong> {restaurant.cuisine_type}
-                                        </Card.Text>
-                                        <Card.Text>
-                                            <strong>Location:</strong>{" "}
-                                            <a href={`https://www.google.com/maps/search/${restaurant.location}`}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                            >{restaurant.location}
-                                            </a>
-                                        </Card.Text>
-                                        <Card.Text>
-                                            <strong>Capacity:</strong>{restaurant.capacity} guests
-                                        </Card.Text>
-                                    </Card.Body>
-                                </Card>
-
-                            </Col>
+                            <RestaurantCard key={restaurant.id} restaurant={restaurant} />
                         ))}
                     </Row>
                 )}
-
+                <h2 className="text-center mb-4 mt-5">Find Us</h2>
+                <RestaurantMap restaurants={restaurants} />
             </Container>
         </div>
     )

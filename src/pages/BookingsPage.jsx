@@ -59,7 +59,6 @@ export default function BookingsPage() {
     const fetchBookings = async () => {
         const token = localStorage.getItem('token');
         try {
-            // const currentToken = localStorage.getItem('token');
             const res = await axios.get('https://restaurant-backend-production-3168.up.railway.app/bookings', {
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -137,7 +136,7 @@ export default function BookingsPage() {
             setRestaurantId("");
             setEditingId(null);
 
-            // const token = localStorage.getItem('token')
+
             const freshDecoded = jwtDecode(localStorage.getItem('token'));
             setEmail(freshDecoded.email);
 
