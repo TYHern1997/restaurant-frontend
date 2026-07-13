@@ -33,7 +33,6 @@ export default function HomePage() {
             <HeroSection />
 
             <Container className="my-5">
-                <h2 className="text-center mb-4 mt-5">Find Us</h2>
                 {/* <RestaurantMap restaurants={restaurants} /> */}
                 <br />
                 {loading ? (
