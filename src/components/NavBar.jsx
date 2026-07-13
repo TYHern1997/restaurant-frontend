@@ -29,6 +29,7 @@ export default function AppNavBar() {
                                 {decoded?.role === 'admin' && (
                                     <Nav.Link href="/admin">Admin</Nav.Link>
                                 )}
+                                <Nav.Link href="/profile">Profile</Nav.Link>
                                 <Nav.Link href="/my-bookings">My Bookings</Nav.Link>
                                 <Nav.Link href="/bookings">Book Now</Nav.Link>
 
