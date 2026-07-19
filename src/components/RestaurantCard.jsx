@@ -9,6 +9,14 @@ export default function RestaurantCard({ restaurant }) {
                     <Card.Text>
                         <strong>Cuisine:</strong> {restaurant.cuisine_type}
                     </Card.Text>
+                    {restaurant.menu_url && (
+                        <a href={restaurant.menu_url}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            View Menu
+                        </a>
+                    )}
                     <Card.Text>
                         <strong>Location:</strong>{" "}
 

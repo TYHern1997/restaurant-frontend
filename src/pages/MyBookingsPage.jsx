@@ -21,6 +21,7 @@ export default function MyBookingsPage() {
             });
             console.log('bookings data:', res.data);
             setBookings(res.data);
+            console.log(bookings)
         } catch (err) {
             console.error(err);
         }
@@ -43,6 +44,20 @@ export default function MyBookingsPage() {
         navigate('/bookings');
     };
 
+    const handleVisited = async (id) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.put(
+                `https://restaurant-backend-production-3168.up.railway.app/bookings/${id}/visited`,
+                {},
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            fetchBookings(); // refresh list
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     return (
         <div style={{ backgroundColor: "#f8f4f0", minHeight: "100vh" }}>
             <AppNavBar />
@@ -52,6 +67,7 @@ export default function MyBookingsPage() {
                     bookings={bookings}
                     handleEdit={handleEdit}
                     handleDelete={handleDelete}
+                    handleVisited={handleVisited}
                 />
             </Container>
         </div>

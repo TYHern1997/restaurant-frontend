@@ -5,12 +5,14 @@ import BookingsPage from './pages/BookingsPage'
 import "bootstrap/dist/css/bootstrap.min.css";
 import MyBookingsPage from './pages/MyBookingsPage';
 import AdminPage from './pages/AdminPage';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/bookings" element={<BookingsPage />} />
