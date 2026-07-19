@@ -11,6 +11,7 @@ const API = "https://restaurant-backend-production-3168.up.railway.app";
 export default function AdminPage() {
     const [users, setUsers] = useState([]);
     const [restaurants, setRestaurants] = useState([]);
+    const [menuUrl, setMenuUrl] = useState('')
     const [name, setName] = useState('');
     const [cuisineType, setCuisineType] = useState('');
     const [capacity, setCapacity] = useState('');
@@ -56,10 +57,11 @@ export default function AdminPage() {
         try {
             await axios.post(`${API}/restaurants`, {
                 name, cuisine_type: cuisineType, capacity, location
+                , menu_url: menuUrl
             }, { headers });
             setSuccess('Restaurant added successfully!');
             setTimeout(() => setSuccess(''), 3000);
-            setName(''); setCuisineType(''); setCapacity(''); setLocation('');
+            setName(''); setCuisineType(''); setCapacity(''); setLocation(''); setMenuUrl('')
             fetchRestaurants();
         } catch (err) {
             setError(err.response?.data?.error || 'Something went wrong');
@@ -106,6 +108,12 @@ export default function AdminPage() {
                         </Col>
                     </Row>
                     <Row>
+                        <Col sm={6}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Menu</Form.Label>
+                                <Form.Control value={menuUrl} onChange={(e) => setMenuUrl(e.target.value)} placeholder="Paste menu image or PDF URL" />
+                            </Form.Group>
+                        </Col>
                         <Col sm={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label>Capacity</Form.Label>

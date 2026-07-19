@@ -1,12 +1,24 @@
 import { Row, Col, Card, Button } from "react-bootstrap"
 
-export default function BookingList({ bookings, handleEdit, handleDelete }) {
+export default function BookingList({ bookings, handleEdit, handleDelete, handleVisited }) {
     return (
         <Row>
             {bookings.map((booking) => (
                 <Col sm={4} key={booking.id} className="mb-4">
                     <Card className="h-100 shadow-sm">
                         <Card.Body>
+                            <div className="d-flex justify-content-end gap-2 mb-2">
+                                {!booking.visited && (
+                                    <Button
+                                        variant="outline-success"
+                                        size="sm"
+                                        title="Mark as visited"
+                                        onClick={() => handleVisited(booking.id)}
+                                    >
+                                        ✅
+                                    </Button>
+                                )}
+                            </div>
                             <Card.Title>{booking.title}</Card.Title>
                             <Card.Text>
                                 <strong>Description:</strong> {booking.description}

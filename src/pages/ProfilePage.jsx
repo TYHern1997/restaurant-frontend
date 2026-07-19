@@ -1,10 +1,11 @@
-import { userSate, useEffect } from "react"
-import { ref, upladBytes, getDownloadURL } from "firebase/storage"
+import { useState, useEffect, useRef } from "react"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase"
 import { jwtDecode } from "jwt-decode"
 import axios from "axios"
-import { Container, Image, Form, Button } from "react-bootstrap"
+import { Container, Image, Form, Row, Col } from "react-bootstrap"
 import AppNavBar from "../components/NavBar"
+import ReviewCard from "../components/ReviewCard";
 
 const API = "https://restaurant-backend-production-3168.up.railway.app"
 
@@ -14,38 +15,127 @@ export default function ProfilePage() {
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState('')
     const [error, setError] = useState('')
+    const [visitedBookings, setVisitedBookings] = useState([]);
+    const [reviews, setReviews] = useState({});
+    const [editingReview, setEditingReview] = useState(null);
 
     const token = localStorage.getItem('token')
     const decoded = token ? jwtDecode(token) : null;
+    const fileInputRef = useRef(null)
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get(`${API}/users/${decoded.id}`, { headers: { Authorization: `Bearer ${token}` } })
-                setPreviewUrl(res.data.profile_pic || '')
+                const res = await axios.get(`${API}/users/${decoded.id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setPreviewUrl(res.data.profile_pic || '');
             } catch (err) {
-                console.error(err)
+                console.error(err);
             }
-        }
-        if (decoded) fetchUser()
-    }, [])
+        };
 
-    const handleFileChange = (e) => {
-        if (e.target.files[0]) {
-            setProfilePic(e.target.files[0])
+
+        const fetchVisitedBookings = async () => {
+            try {
+                const res = await axios.get(`${API}/bookings`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                const visited = res.data.filter(b => b.visited === true);
+                setVisitedBookings(visited);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        const fetchReviews = async () => {
+            try {
+                const res = await axios.get(`${API}/reviews/user/${decoded.id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                // convert to object keyed by booking_id for easy lookup
+                const reviewMap = {};
+                res.data.forEach(r => {
+                    reviewMap[r.booking_id] = r;
+                });
+                setReviews(reviewMap);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        if (decoded) {
+            fetchUser();
+            fetchVisitedBookings();
+            fetchReviews();
+        }
+    }, []);
+
+
+    const handlePencilClick = () => {
+        fileInputRef.current.click()
+    }
+
+
+
+    const handleReviewSubmit = async (bookingId, restaurantId, rating, comment) => {
+        try {
+            if (reviews[bookingId]) {
+                // update  review
+                await axios.put(`${API}/reviews/${reviews[bookingId].id}`,
+                    { rating, comment },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+            } else {
+                // make new review
+                await axios.post(`${API}/reviews`,
+                    {
+                        booking_id: bookingId,
+                        user_id: decoded.id,
+                        restaurant_id: restaurantId,
+                        rating,
+                        comment
+                    },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+            }
+
+            //refresh
+            const res = await axios.get(`${API}/reviews/user/${decoded.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const reviewMap = {};
+            res.data.forEach(r => {
+                reviewMap[r.booking_id] = r;
+            });
+            setReviews(reviewMap);
+            setEditingReview(null);
+        } catch (err) {
+            console.error(err);
+            setError('Failed to submit review');
+            setTimeout(() => setError(''), 3000);
+        }
+    };
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0]
+        if (file) {
+            setProfilePic(file)
+            await handleUpload(file)
         }
     }
 
-    const handleUpload = async (e) => {
-        e.preventDefault()
-        if (!profilePic) return;
+    const handleUpload = async (file) => {
+
+        if (!file) return;
         setLoading(true)
         setError('')
         setSuccess('');
 
         try {
             const storageRef = ref(storage, `profiles/${decoded.id}_${Date.now()}`)
-            await uploadBytes(storageRef, profilePic)
+            await uploadBytes(storageRef, file)
             const url = await getDownloadURL(storageRef)
             await axios.put(`${API}/users/${decoded.id}`,
                 { profile_pic: url },
@@ -66,68 +156,103 @@ export default function ProfilePage() {
 
     }
 
+
+
     return (
         <div style={{ backgroundColor: "#f8f4f0", minHeight: "100vh" }}>
             <AppNavBar />
-            <Container className="my-5" style={{ maxWidth: "500px" }}>
-                <h2 className="text-center mb-4">Profile</h2>
-
-                <div className="text-center mb-4">
-                    {previewUrl ? (<Image
-                        src={previewUrl}
-                        roundedCircle
-                        style={{ width: "150px", height: "150px", objectFit: "cover" }}
-                    />)
-                        : (
-                            <div
-                                style={{
-                                    width: "150px",
-                                    height: "150px",
-                                    borderRadius: "50%",
-                                    backgroundColor: "#ddd",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    margin: "0 auto"
-                                }}
-                            >
-                                <span>No Photo</span>
-                            </div>
+            <Container className="my-5">
+                <Row>
+                    {/* Left side - My Places */}
+                    <Col sm={8}>
+                        <h3 className="mb-4">My Places</h3>
+                        {visitedBookings.length === 0 ? (
+                            <p className="text-muted">No visited restaurants yet — mark a booking as visited to see it here!</p>
+                        ) : (
+                            visitedBookings.map((booking) => (
+                                <ReviewCard
+                                    key={booking.id}
+                                    booking={booking}
+                                    existingReview={reviews[booking.id]}
+                                    onSubmit={handleReviewSubmit}
+                                    isEditing={editingReview === booking.id}
+                                    onEditToggle={() => setEditingReview(
+                                        editingReview === booking.id ? null : booking.id
+                                    )}
+                                />
+                            ))
                         )}
-                </div>
+                    </Col>
 
-                <div className="text-center mb-4">
-                    <h5>{decoded?.email}</h5>
-                    <p className="text-muted">
-                        {decoded?.role === 'admin' ? '👑 Admin' : '👤 User'}
-                    </p>
-                </div>
+                    {/* Right side - Profile info */}
+                    <Col sm={4} className="text-center">
+                        <Form onSubmit={handleUpload}>
+                            <div style={{ position: "relative", display: "inline-block" }}>
 
-                {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
-                {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
-                <Form onSubmit={handleUpload}>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Update Profile Picture</Form.Label>
-                        <Form.Control
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileChange}
-                            disabled={loading}
-                        />
-                    </Form.Group>
-                    <div className="d-grid">
-                        <Button
-                            type="submit"
-                            variant="danger"
-                            className="rounded-pill"
-                            disabled={loading || !profilePic}
-                        >
-                            {loading ? "Uploading..." : "Upload Photo"}
-                        </Button>
-                    </div>
-                </Form>
+                                {/* Profile picture or placeholder */}
+                                {previewUrl ? (
+                                    <Image
+                                        src={previewUrl}
+                                        roundedCircle
+                                        style={{ width: "120px", height: "120px", objectFit: "cover" }}
+                                    />
+                                ) : (
+                                    <div style={{
+                                        width: "120px",
+                                        height: "120px",
+                                        borderRadius: "50%",
+                                        backgroundColor: "#ddd",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        margin: "0 auto"
+                                    }}>
+                                        <span>No Photo</span>
+                                    </div>
+                                )}
 
+                                {/* Hidden file input */}
+                                <Form.Control
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                    disabled={loading}
+                                    ref={fileInputRef}
+                                    style={{ display: "none" }}
+                                />
+
+                                {/* Pencil icon overlay */}
+                                <div
+                                    onClick={handlePencilClick}
+                                    style={{
+                                        position: "absolute",
+                                        bottom: "0px",
+                                        right: "0px",
+                                        cursor: "pointer",
+                                        backgroundColor: "white",
+                                        borderRadius: "50%",
+                                        padding: "4px",
+                                        fontSize: "1rem"
+                                    }}
+                                >
+                                    ✏️
+                                </div>
+                            </div>
+
+                            <h5 className="mt-3">{decoded?.email}</h5>
+                            <p className="text-muted">
+                                {decoded?.role === 'admin' ? '👑 Admin' : '👤 User'}
+                            </p>
+
+                            {success && <p style={{ color: "green" }}>{success}</p>}
+                            {error && <p style={{ color: "red" }}>{error}</p>}
+                            {loading && <p style={{ color: "gray" }}>Uploading...</p>}
+
+                        </Form>
+                    </Col>
+                </Row>
             </Container>
         </div>
-    )
+    );
+
 }
