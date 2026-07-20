@@ -21,6 +21,12 @@ export default function AdminPage() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    const [restaurantPage, setRestaurantPage] = useState(1);
+    const [usersPage, setUsersPage] = useState(1);
+    const itemsPerPage = 5;
+
+
+
     useEffect(() => {
         // redirect if not admin
         const token = localStorage.getItem('token');
@@ -101,6 +107,20 @@ export default function AdminPage() {
         }
     };
 
+    const paginatedRestaurants = restaurants.slice(
+        (restaurantPage - 1) * itemsPerPage,
+        restaurantPage * itemsPerPage
+    );
+
+    const totalRestaurantPages = Math.ceil(restaurants.length / itemsPerPage);
+
+    const paginatedUsers = users.slice(
+        (usersPage - 1) * itemsPerPage,
+        usersPage * itemsPerPage
+    )
+
+    const totalUserPages = Math.ceil(users.length / itemsPerPage)
+
     return (
         <div style={{ backgroundColor: "#f8f4f0", minHeight: "100vh" }}>
             <AppNavBar />
@@ -174,7 +194,7 @@ export default function AdminPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {restaurants.map((r) => (
+                        {paginatedRestaurants.map((r) => (
                             <tr key={r.id}>
                                 <td>{r.id}</td>
                                 <td>{r.name}</td>
@@ -187,7 +207,6 @@ export default function AdminPage() {
                                         <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleEditRestaurant(r)}>
                                             Edit
                                         </Button>
-                                        <br />
                                         <Button variant="outline-danger" size="sm" onClick={() => handleDeleteRestaurant(r.id)}>
                                             Delete
                                         </Button>
@@ -197,6 +216,30 @@ export default function AdminPage() {
                         ))}
                     </tbody>
                 </Table>
+
+                <div className="d-flex justify-content-center align-items-center gap-3 mt-3">
+                    <Button
+                        variant='outline-secondary'
+                        size='sm'
+                        disabled={usersPage === 1}
+                        onClick={() => setUsersPage(usersPage - 1)}
+                    >
+                        Previous
+                    </Button>
+
+                    <span>Page {usersPage} of {totalUserPages}</span>
+
+                    <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        disabled={usersPage === totalUserPages}
+                        onClick={() => setUsersPage(usersPage + 1)}
+                    >
+                        Next
+                    </Button>
+                </div>
+
+
 
                 {/* Users Table */}
                 <h4 className="mt-5">All Users</h4>
@@ -209,7 +252,7 @@ export default function AdminPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((u) => (
+                        {paginatedUsers.map((u) => (
                             <tr key={u.id}>
                                 <td>{u.id}</td>
                                 <td>{u.email}</td>
@@ -218,6 +261,28 @@ export default function AdminPage() {
                         ))}
                     </tbody>
                 </Table>
+
+                <div className="d-flex justify-content-center align-items-center gap-3 mt-3">
+                    <Button
+                        variant='outline-secondary'
+                        size='sm'
+                        disabled={restaurantPage === 1}
+                        onClick={() => setRestaurantPage(restaurantPage - 1)}
+                    >
+                        Previous
+                    </Button>
+
+                    <span>Page {restaurantPage} of {totalRestaurantPages}</span>
+
+                    <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        disabled={restaurantPage === totalRestaurantPages}
+                        onClick={() => setRestaurantPage(restaurantPage + 1)}
+                    >
+                        Next
+                    </Button>
+                </div>
 
             </Container>
         </div>
