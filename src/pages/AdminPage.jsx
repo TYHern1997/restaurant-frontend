@@ -10,6 +10,7 @@ const API = "https://restaurant-backend-production-3168.up.railway.app";
 
 export default function AdminPage() {
     const [users, setUsers] = useState([]);
+    const [editingRestaurant, setEditingRestaurant] = useState(null);
     const [restaurants, setRestaurants] = useState([]);
     const [menuUrl, setMenuUrl] = useState('')
     const [name, setName] = useState('');
@@ -55,18 +56,37 @@ export default function AdminPage() {
     const handleAddRestaurant = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${API}/restaurants`, {
-                name, cuisine_type: cuisineType, capacity, location
-                , menu_url: menuUrl
-            }, { headers });
-            setSuccess('Restaurant added successfully!');
+            if (editingRestaurant) {
+                await axios.put(`${API}/restaurants/${editingRestaurant}`, {
+                    name, cuisine_type: cuisineType, capacity, location
+                    , menu_url: menuUrl
+                }, { headers });
+                setSuccess('Restaurant updated successfully!')
+            } else {
+                await axios.post(`${API}/restaurants`, {
+                    name, cuisine_type: cuisineType, capacity, location
+                    , menu_url: menuUrl
+                }, { headers });
+                setSuccess('Restaurant added successfully!')
+            }
+
             setTimeout(() => setSuccess(''), 3000);
-            setName(''); setCuisineType(''); setCapacity(''); setLocation(''); setMenuUrl('')
+            setName(''); setCuisineType(''); setCapacity(''); setLocation(''); setMenuUrl('');
+            setEditingRestaurant(null);
             fetchRestaurants();
         } catch (err) {
             setError(err.response?.data?.error || 'Something went wrong');
             setTimeout(() => setError(''), 3000);
         }
+    };
+
+    const handleEditRestaurant = (restaurant) => {
+        setEditingRestaurant(restaurant.id);
+        setName(restaurant.name || '');
+        setCuisineType(restaurant.cuisine_type || '');
+        setCapacity(restaurant.capacity || '');
+        setLocation(restaurant.location || '');
+        setMenuUrl(restaurant.menu_url || '');
     };
 
     const handleDeleteRestaurant = async (id) => {
@@ -91,7 +111,7 @@ export default function AdminPage() {
                 {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
 
                 {/* Add Restaurant */}
-                <h4 className="mt-4">Add New Restaurant</h4>
+                <h4 className="mt-4">{editingRestaurant ? "Edit Restaurant" : "Add New Restaurant"}</h4>
                 <Form onSubmit={handleAddRestaurant}>
                     <Row>
                         <Col sm={6}>
@@ -127,7 +147,17 @@ export default function AdminPage() {
                             </Form.Group>
                         </Col>
                     </Row>
-                    <Button type="submit" variant="danger" className="rounded-pill">Add Restaurant</Button>
+                    <Button type="submit" variant="danger" className="rounded-pill">{editingRestaurant ? "Update Restaurant" : "Add Restaurant"}</Button>
+                    {editingRestaurant && (
+                        <Button variant="outline-secondary" className="ms-2 rounded-pill"
+                            onClick={() => {
+                                setEditingRestaurant(null);
+                                setName(''); setCuisineType(''); setCapacity(''); setLocation(''); setMenuUrl('');
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                    )}
                 </Form>
 
                 {/* Restaurants Table */}
@@ -151,7 +181,11 @@ export default function AdminPage() {
                                 <td>{r.cuisine_type}</td>
                                 <td>{r.capacity}</td>
                                 <td>{r.location}</td>
+
                                 <td>
+                                    <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleEditRestaurant(r)}>
+                                        Edit
+                                    </Button>
                                     <Button variant="outline-danger" size="sm" onClick={() => handleDeleteRestaurant(r.id)}>
                                         Delete
                                     </Button>
