@@ -186,6 +186,7 @@ export default function AdminPage() {
                                     <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleEditRestaurant(r)}>
                                         Edit
                                     </Button>
+                                    <br />
                                     <Button variant="outline-danger" size="sm" onClick={() => handleDeleteRestaurant(r.id)}>
                                         Delete
                                     </Button>
