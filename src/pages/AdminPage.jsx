@@ -183,13 +183,15 @@ export default function AdminPage() {
                                 <td>{r.location}</td>
 
                                 <td>
-                                    <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleEditRestaurant(r)}>
-                                        Edit
-                                    </Button>
-                                    <br />
-                                    <Button variant="outline-danger" size="sm" onClick={() => handleDeleteRestaurant(r.id)}>
-                                        Delete
-                                    </Button>
+                                    <div className="d-flex gap-2">
+                                        <Button variant="outline-primary" size="sm" className="me-2" onClick={() => handleEditRestaurant(r)}>
+                                            Edit
+                                        </Button>
+                                        <br />
+                                        <Button variant="outline-danger" size="sm" onClick={() => handleDeleteRestaurant(r.id)}>
+                                            Delete
+                                        </Button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
