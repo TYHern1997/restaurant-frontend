@@ -6,6 +6,7 @@ import AppNavBar from "../components/NavBar"
 import BookingList from "../components/BookingList";
 import BookingForm from "../components/BookingForm";
 import { jwtDecode } from "jwt-decode";
+import Footer from "../components/Footer";
 
 export default function BookingsPage() {
     const navigate = useNavigate();
@@ -184,10 +185,15 @@ export default function BookingsPage() {
     }
 
     return (
-        <div style={{ backgroundColor: "#f8f4f0", minHeight: "100vh" }}>
+        <div style={{
+            backgroundColor: "#f8f4f0",
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column"
+        }}>
             <AppNavBar />
 
-            <Container className="my-5">
+            <Container className="my-5" style={{ flex: 1 }}>
 
 
                 <BookingForm
@@ -208,6 +214,7 @@ export default function BookingsPage() {
 
 
             </Container>
+            <Footer />
         </div>
     );
 }

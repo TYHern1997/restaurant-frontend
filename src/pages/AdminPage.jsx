@@ -5,6 +5,7 @@ import { Container, Table, Button, Form, Row, Col, Alert } from "react-bootstrap
 import AppNavBar from "../components/NavBar";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
 const API = "https://restaurant-backend-production-3168.up.railway.app";
 
@@ -221,19 +222,19 @@ export default function AdminPage() {
                     <Button
                         variant='outline-secondary'
                         size='sm'
-                        disabled={usersPage === 1}
-                        onClick={() => setUsersPage(usersPage - 1)}
+                        disabled={restaurantPage === 1}
+                        onClick={() => setRestaurantPage(restaurantPage - 1)}
                     >
                         Previous
                     </Button>
 
-                    <span>Page {usersPage} of {totalUserPages}</span>
+                    <span>Page {restaurantPage} of {totalRestaurantPages}</span>
 
                     <Button
                         variant="outline-secondary"
                         size="sm"
-                        disabled={usersPage === totalUserPages}
-                        onClick={() => setUsersPage(usersPage + 1)}
+                        disabled={restaurantPage === totalRestaurantPages}
+                        onClick={() => setRestaurantPage(restaurantPage + 1)}
                     >
                         Next
                     </Button>
@@ -266,25 +267,27 @@ export default function AdminPage() {
                     <Button
                         variant='outline-secondary'
                         size='sm'
-                        disabled={restaurantPage === 1}
-                        onClick={() => setRestaurantPage(restaurantPage - 1)}
+                        disabled={usersPage === 1}
+                        onClick={() => setUsersPage(usersPage - 1)}
                     >
                         Previous
                     </Button>
 
-                    <span>Page {restaurantPage} of {totalRestaurantPages}</span>
+                    <span>Page {usersPage} of {totalUserPages}</span>
 
                     <Button
                         variant="outline-secondary"
                         size="sm"
-                        disabled={restaurantPage === totalRestaurantPages}
-                        onClick={() => setRestaurantPage(restaurantPage + 1)}
+                        disabled={usersPage === totalUserPages}
+                        onClick={() => setUsersPage(usersPage + 1)}
                     >
                         Next
                     </Button>
                 </div>
 
+
             </Container>
+            <Footer />
         </div>
     );
 }

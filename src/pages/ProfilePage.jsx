@@ -6,6 +6,7 @@ import axios from "axios"
 import { Container, Image, Form, Row, Col } from "react-bootstrap"
 import AppNavBar from "../components/NavBar"
 import ReviewCard from "../components/ReviewCard";
+import Footer from "../components/Footer";
 
 const API = "https://restaurant-backend-production-3168.up.railway.app"
 
@@ -23,48 +24,49 @@ export default function ProfilePage() {
     const decoded = token ? jwtDecode(token) : null;
     const fileInputRef = useRef(null)
 
+
+    const fetchUser = async () => {
+        try {
+            const res = await axios.get(`${API}/users/${decoded.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setPreviewUrl(res.data.profile_pic || '');
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+
+    const fetchVisitedBookings = async () => {
+        try {
+            const res = await axios.get(`${API}/bookings`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const visited = res.data.filter(b => b.visited === true);
+            setVisitedBookings(visited);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const fetchReviews = async () => {
+        try {
+            const res = await axios.get(`${API}/reviews/user/${decoded.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            // convert to object keyed by booking_id for easy lookup
+            const reviewMap = {};
+            res.data.forEach(r => {
+                reviewMap[r.booking_id] = r;
+            });
+            setReviews(reviewMap);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const res = await axios.get(`${API}/users/${decoded.id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setPreviewUrl(res.data.profile_pic || '');
-            } catch (err) {
-                console.error(err);
-            }
-        };
-
-
-        const fetchVisitedBookings = async () => {
-            try {
-                const res = await axios.get(`${API}/bookings`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-
-                const visited = res.data.filter(b => b.visited === true);
-                setVisitedBookings(visited);
-            } catch (err) {
-                console.error(err);
-            }
-        };
-
-        const fetchReviews = async () => {
-            try {
-                const res = await axios.get(`${API}/reviews/user/${decoded.id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                // convert to object keyed by booking_id for easy lookup
-                const reviewMap = {};
-                res.data.forEach(r => {
-                    reviewMap[r.booking_id] = r;
-                });
-                setReviews(reviewMap);
-            } catch (err) {
-                console.error(err);
-            }
-        };
-
         if (decoded) {
             fetchUser();
             fetchVisitedBookings();
@@ -159,33 +161,19 @@ export default function ProfilePage() {
 
 
     return (
-        <div style={{ backgroundColor: "#f8f4f0", minHeight: "100vh" }}>
+        <div style={{
+            backgroundColor: "#f8f4f0",
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column"
+        }}>
             <AppNavBar />
-            <Container className="my-5">
+            <Container className="my-5" style={{ flex: 1 }}>
                 <Row>
-                    {/* Left side - My Places */}
-                    <Col sm={8}>
-                        <h3 className="mb-4">My Places</h3>
-                        {visitedBookings.length === 0 ? (
-                            <p className="text-muted">No visited restaurants yet — mark a booking as visited to see it here!</p>
-                        ) : (
-                            visitedBookings.map((booking) => (
-                                <ReviewCard
-                                    key={booking.id}
-                                    booking={booking}
-                                    existingReview={reviews[booking.id]}
-                                    onSubmit={handleReviewSubmit}
-                                    isEditing={editingReview === booking.id}
-                                    onEditToggle={() => setEditingReview(
-                                        editingReview === booking.id ? null : booking.id
-                                    )}
-                                />
-                            ))
-                        )}
-                    </Col>
 
-                    {/* Right side - Profile info */}
-                    <Col sm={4} className="text-center">
+
+                    {/*Profile info */}
+                    <Col xs={12} sm={4} className="text-center">
                         <Form onSubmit={handleUpload}>
                             <div style={{ position: "relative", display: "inline-block" }}>
 
@@ -250,8 +238,32 @@ export default function ProfilePage() {
 
                         </Form>
                     </Col>
+
+                    {/* My Places */}
+                    <Col xs={12} sm={8}>
+                        <h3 className="mb-4">My Places</h3>
+                        {visitedBookings.length === 0 ? (
+                            <p className="text-muted">No visited restaurants yet — mark a booking as visited to see it here!</p>
+                        ) : (
+                            visitedBookings.map((booking) => (
+                                <ReviewCard
+                                    key={booking.id}
+                                    booking={booking}
+                                    existingReview={reviews[booking.id]}
+                                    onSubmit={handleReviewSubmit}
+                                    isEditing={editingReview === booking.id}
+                                    onEditToggle={() => setEditingReview(
+                                        editingReview === booking.id ? null : booking.id
+                                    )}
+                                    onImageUpload={fetchReviews} />
+                            ))
+                        )}
+                    </Col>
+
+
                 </Row>
             </Container>
+            <Footer />
         </div>
     );
 

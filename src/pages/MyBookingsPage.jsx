@@ -4,6 +4,7 @@ import { Container } from "react-bootstrap";
 import AppNavBar from "../components/NavBar";
 import BookingList from "../components/BookingList";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
 export default function MyBookingsPage() {
     const navigate = useNavigate();
@@ -59,9 +60,14 @@ export default function MyBookingsPage() {
     };
 
     return (
-        <div style={{ backgroundColor: "#f8f4f0", minHeight: "100vh" }}>
+        <div style={{
+            backgroundColor: "#f8f4f0",
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: "column"
+        }}>
             <AppNavBar />
-            <Container className="my-5">
+            <Container className="my-5" style={{ flex: 1 }}>
                 <h2 className="text-center mb-4">My Bookings</h2>
                 <BookingList
                     bookings={bookings}
@@ -70,6 +76,7 @@ export default function MyBookingsPage() {
                     handleVisited={handleVisited}
                 />
             </Container>
+            <Footer />
         </div>
     );
 }
