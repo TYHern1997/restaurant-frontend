@@ -246,20 +246,28 @@ export default function ProfilePage() {
                             <p className="text-muted">No visited restaurants yet — mark a booking as visited to see it here!</p>
                         ) : (
                             visitedBookings.map((booking) => (
-                                <ReviewCard
-                                    key={booking.id}
-                                    booking={booking}
-                                    existingReview={reviews[booking.id]}
-                                    onSubmit={handleReviewSubmit}
-                                    isEditing={editingReview === booking.id}
-                                    onEditToggle={() => setEditingReview(
-                                        editingReview === booking.id ? null : booking.id
+                                <div key={booking.id}>
+                                    {!reviews[booking.id] && (
+                                        <p className="text-muted small mb-1">⏳ Pending Review</p>
                                     )}
-                                    onImageUpload={fetchReviews} />
+                                    {reviews[booking.id] && (
+                                        <p className="text-success small mb-1">✅ Reviewed</p>
+                                    )}
+                                    <ReviewCard
+                                        key={booking.id}
+                                        booking={booking}
+                                        existingReview={reviews[booking.id]}
+                                        onSubmit={handleReviewSubmit}
+                                        isEditing={editingReview === booking.id}
+                                        onEditToggle={() => setEditingReview(
+                                            editingReview === booking.id ? null : booking.id
+                                        )}
+                                        onImageUpload={fetchReviews}
+                                    />
+                                </div>
                             ))
                         )}
                     </Col>
-
 
                 </Row>
             </Container>

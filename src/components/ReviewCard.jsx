@@ -9,6 +9,7 @@ export default function ReviewCard({ booking, existingReview, onSubmit, isEditin
     const [rating, setRating] = useState(existingReview?.rating || 0);
     const [comment, setComment] = useState(existingReview?.comment || '');
     const token = localStorage.getItem('token')
+    const [isCorrecting, setIsCorrecting] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -21,6 +22,11 @@ export default function ReviewCard({ booking, existingReview, onSubmit, isEditin
         const file = e.target.files[0]
         if (!file) return
 
+        if (!existingReview?.id) {
+            alert("Please save your review first before uploading an image.");
+            return;
+        }
+
         try {
             const storageRef = ref(storage, `reviews/${Date.now()}_${file.name}`)
             await uploadBytes(storageRef, file)
@@ -31,22 +37,28 @@ export default function ReviewCard({ booking, existingReview, onSubmit, isEditin
             )
             if (onImageUpload) await onImageUpload()
         } catch (err) {
+            z
             console.error(err)
         }
     }
 
     const handleCorrectText = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         if (!comment.trim()) return;
 
+        setIsCorrecting(true);
         try {
             const response = await axios.post(`${API}/ai/correct-review`, { comment });
-            setComment(response.data.corrected);
-
+            if (response.data.corrected) {
+                setComment(response.data.corrected);
+            }
         } catch (err) {
-            console.error(err)
+            console.error("AI correction error:", err.response?.data || err.message);
+            alert(err.response?.data?.error || "Failed to fix review. Check backend logs.");
+        } finally {
+            setIsCorrecting(false);
         }
-    }
+    };
     return (
         <Card className="mb-4 shadow-sm">
             <Card.Body>
@@ -177,7 +189,7 @@ export default function ReviewCard({ booking, existingReview, onSubmit, isEditin
                                         className="mt-1"
                                         onClick={handleCorrectText}
                                     >
-                                        ✨ Improve with AI
+                                        {isCorrecting ? "✨ Improving..." : "✨ Improve with AI"}
                                     </Button>
                                 </Form.Group>
                                 <Button type="submit" variant="danger" size="sm" className="rounded-pill">
