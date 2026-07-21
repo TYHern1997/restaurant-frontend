@@ -19,6 +19,7 @@ export default function ProfilePage() {
     const [visitedBookings, setVisitedBookings] = useState([]);
     const [reviews, setReviews] = useState({});
     const [editingReview, setEditingReview] = useState(null);
+    const [userName, setUserName] = useState('')
 
     const token = localStorage.getItem('token')
     const decoded = token ? jwtDecode(token) : null;
@@ -31,6 +32,7 @@ export default function ProfilePage() {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setPreviewUrl(res.data.profile_pic || '');
+            setUserName(res.data.first_name || res.data.email);
         } catch (err) {
             console.error(err);
         }
@@ -227,7 +229,7 @@ export default function ProfilePage() {
                                 </div>
                             </div>
 
-                            <h5 className="mt-3">{decoded?.email}</h5>
+                            <h5 className="mt-3">{userName}</h5>
                             <p className="text-muted">
                                 {decoded?.role === 'admin' ? '👑 Admin' : '👤 User'}
                             </p>
