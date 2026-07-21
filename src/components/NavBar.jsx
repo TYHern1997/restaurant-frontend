@@ -14,7 +14,7 @@ export default function AppNavBar() {
     }
 
     return (
-        <Navbar bg="dark" variant="dark" expand="lg">
+        <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
             <Container>
                 <Navbar.Brand href="/">
                     🍽️ Sigma Serve
