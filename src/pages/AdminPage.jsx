@@ -1,11 +1,13 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Container, Table, Button, Form, Row, Col, Alert } from "react-bootstrap";
 import AppNavBar from "../components/NavBar";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
+import { storage } from "../firebase";
+import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 
 const API = "https://restaurant-backend-production-3168.up.railway.app";
 
@@ -25,6 +27,7 @@ export default function AdminPage() {
     const [restaurantPage, setRestaurantPage] = useState(1);
     const [usersPage, setUsersPage] = useState(1);
     const itemsPerPage = 5;
+    const menuFileRef = useRef(null)
 
 
 
@@ -62,17 +65,29 @@ export default function AdminPage() {
 
     const handleAddRestaurant = async (e) => {
         e.preventDefault();
+
+        if (!name || !cuisineType || !capacity || !location) {
+            setError('Please fill in all required fields');
+            setTimeout(() => setError(''), 3000);
+            return;
+        }
         try {
             if (editingRestaurant) {
                 await axios.put(`${API}/restaurants/${editingRestaurant}`, {
-                    name, cuisine_type: cuisineType, capacity, location
-                    , menu_url: menuUrl
-                }, { headers });
+                    name,
+                    cuisine_type: cuisineType,
+                    capacity: capacity ? parseInt(capacity) : null,
+                    location,
+                    menu_url: menuUrl
+                }, { headers })
                 setSuccess('Restaurant updated successfully!')
             } else {
                 await axios.post(`${API}/restaurants`, {
-                    name, cuisine_type: cuisineType, capacity, location
-                    , menu_url: menuUrl
+                    name,
+                    cuisine_type: cuisineType,
+                    capacity: capacity ? parseInt(capacity) : null,
+                    location,
+                    menu_url: menuUrl
                 }, { headers });
                 setSuccess('Restaurant added successfully!')
             }
@@ -107,6 +122,18 @@ export default function AdminPage() {
             setTimeout(() => setError(''), 3000);
         }
     };
+
+    const handleMenuUpload = async (file) => {
+        if (!file) return
+        try {
+            const storageRef = ref(storage, `menus/${Date.now()}_${file.name}`)
+            await uploadBytes(storageRef, file)
+            const url = await getDownloadURL(storageRef)
+            setMenuUrl(url)
+        } catch (err) {
+            console.error(err)
+        }
+    }
 
     const paginatedRestaurants = restaurants.slice(
         (restaurantPage - 1) * itemsPerPage,
@@ -152,7 +179,26 @@ export default function AdminPage() {
                         <Col sm={6}>
                             <Form.Group className="mb-3">
                                 <Form.Label>Menu</Form.Label>
-                                <Form.Control value={menuUrl} onChange={(e) => setMenuUrl(e.target.value)} placeholder="Paste menu image or PDF URL" />
+                                <div className="d-flex gap-2 align-items-center">
+                                    <Form.Control
+                                        value={menuUrl}
+                                        onChange={(e) => setMenuUrl(e.target.value)}
+                                        placeholder="Paste menu image or PDF URL"
+                                    />
+                                    <input
+                                        type="file"
+                                        accept="image/*,.pdf"
+                                        ref={menuFileRef}
+                                        style={{ display: "none" }}
+                                        onChange={(e) => handleMenuUpload(e.target.files[0])}
+                                    />
+                                    <Button
+                                        variant="outline-secondary"
+                                        onClick={() => menuFileRef.current.click()}
+                                    >
+                                        📁
+                                    </Button>
+                                </div>
                             </Form.Group>
                         </Col>
                         <Col sm={6}>
