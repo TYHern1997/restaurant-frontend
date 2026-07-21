@@ -35,7 +35,18 @@ export default function ReviewCard({ booking, existingReview, onSubmit, isEditin
         }
     }
 
+    const handleCorrectText = async (e) => {
+        e.preventDefault()
+        if (!comment.trim()) return;
 
+        try {
+            const response = await axios.post(`${API}/ai/correct-review`, { comment });
+            setComment(response.data.corrected);
+
+        } catch (err) {
+            console.error(err)
+        }
+    }
     return (
         <Card className="mb-4 shadow-sm">
             <Card.Body>
@@ -160,6 +171,14 @@ export default function ReviewCard({ booking, existingReview, onSubmit, isEditin
                                         onChange={(e) => setComment(e.target.value)}
                                         placeholder="Write your review..."
                                     />
+                                    <Button
+                                        variant="outline-secondary"
+                                        size="sm"
+                                        className="mt-1"
+                                        onClick={handleCorrectText}
+                                    >
+                                        ✨ Improve with AI
+                                    </Button>
                                 </Form.Group>
                                 <Button type="submit" variant="danger" size="sm" className="rounded-pill">
                                     {existingReview ? "Update Review" : "Submit Review"}

@@ -1,6 +1,7 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { useEffect } from "react";
 
 // Fix for default marker icon not showing in React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -10,10 +11,22 @@ L.Icon.Default.mergeOptions({
     shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-export default function RestaurantMap({ restaurants }) {
+function FlyToRestaurant({ selectedRestaurant }) {
+    const map = useMap();
+
+    useEffect(() => {
+        if (selectedRestaurant?.lat && selectedRestaurant?.lng) {
+            map.flyTo([parseFloat(selectedRestaurant.lat), parseFloat(selectedRestaurant.lng)], 16);
+        }
+    }, [selectedRestaurant]);
+
+    return null;
+}
+
+export default function RestaurantMap({ restaurants, selectedRestaurant }) {
     return (
         <MapContainer
-            center={[3.1500, 101.7000]}  // center of KL
+            center={[3.1500, 101.7000]}
             zoom={13}
             style={{ height: "400px", width: "100%" }}
         >
@@ -21,6 +34,7 @@ export default function RestaurantMap({ restaurants }) {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
             />
+            <FlyToRestaurant selectedRestaurant={selectedRestaurant} />
             {restaurants.map((restaurant) => (
                 restaurant.lat && restaurant.lng ? (
                     <Marker

@@ -12,6 +12,7 @@ export default function HomePage() {
     const [restaurants, setRestaurants] = useState([])
     const [loading, setLoading] = useState(true);
     const [recentReviews, setRecentReviews] = useState([])
+    const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
     useEffect(() => {
         fetchRestaurants()
@@ -56,40 +57,21 @@ export default function HomePage() {
                 ) : (
                     <Row>
                         {restaurants.map((restaurant) => (
-                            <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+                            <RestaurantCard
+                                key={restaurant.id}
+                                restaurant={restaurant}
+                                onSelect={setSelectedRestaurant}
+                            />
                         ))}
                     </Row>
                 )}
                 <h2 className="text-center mb-4 mt-5">Find Us</h2>
-                <RestaurantMap restaurants={restaurants} />
+                <RestaurantMap
+                    restaurants={restaurants}
+                    selectedRestaurant={selectedRestaurant}
+                />
 
-                <h2 className="text-center mb-4 mt-5">What Our Customers Say</h2>
-                <Row>
-                    {recentReviews.map((review) => (
-                        <Col sm={4} key={review.id} className="mb-4">
-                            <Card className="h-100 shadow-sm">
-                                <Card.Body>
-                                    <h6>{review.restaurant_name}</h6>
-                                    <p className="text-muted small">{review.first_name}</p>
-                                    <p>{"⭐".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</p>
-                                    <p>{review.comment}</p>
-                                    {review.image_url && (
-                                        <img
-                                            src={review.image_url}
-                                            alt="review"
-                                            style={{
-                                                width: "100%",
-                                                borderRadius: "8px",
-                                                maxHeight: "150px",
-                                                objectFit: "cover"
-                                            }}
-                                        />
-                                    )}
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
+
 
             </Container>
 
