@@ -10,7 +10,7 @@ const mockRestaurant = {
     menu_url: null
 }
 
-test('rensders restaurant name', () => {
+test('renders restaurant name', () => {
     render(<RestaurantCard restaurant={mockRestaurant} />)
     expect(screen.getByText('Marble 8')).toBeInTheDocument()
 })

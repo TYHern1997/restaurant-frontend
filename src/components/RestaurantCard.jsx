@@ -1,12 +1,15 @@
 import { Card, Col, Button, Modal } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const API = "https://restaurant-backend-production-3168.up.railway.app";
 
 export default function RestaurantCard({ restaurant, onSelect }) {
     const [showModal, setShowModal] = useState(false);
     const [reviews, setReviews] = useState([]);
+    const navigate = useNavigate()
+    const token = localStorage.getItem('token')
 
     const fetchReviews = async () => {
         try {
@@ -21,6 +24,16 @@ export default function RestaurantCard({ restaurant, onSelect }) {
         await fetchReviews();
         setShowModal(true);
     };
+
+    const handleBookNow = (e) => {
+        e.stopPropagation()
+        if (!token) {
+            alert('Log in to book a table')
+            navigate('/auth')
+        } else {
+            navigate(`/bookings?restaurant=${restaurant.id}`)
+        }
+    }
 
     return (
         <Col sm={4} className="mb-4">
@@ -54,6 +67,15 @@ export default function RestaurantCard({ restaurant, onSelect }) {
                     <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleCardClick(); }}>
                         View Reviews
                     </a>
+                    <Button
+                        variant="danger"
+                        size="sm"
+                        className="rounded-pill mt-2 w-100"
+                        onClick={handleBookNow}
+                    >
+                        🍽️ Book a Table
+                    </Button>
+
                 </Card.Body>
             </Card>
             <Modal show={showModal} onHide={() => setShowModal(false)} centered>

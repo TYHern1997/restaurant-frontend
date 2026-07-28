@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 import { Container } from "react-bootstrap"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import AppNavBar from "../components/NavBar"
 import BookingList from "../components/BookingList";
 import BookingForm from "../components/BookingForm";
@@ -10,6 +10,7 @@ import Footer from "../components/Footer";
 
 export default function BookingsPage() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams()
     const [restaurants, setRestaurants] = useState([]);
 
     const [bookings, setBookings] = useState([])
@@ -27,6 +28,11 @@ export default function BookingsPage() {
 
 
     useEffect(() => {
+        const preselected = searchParams.get('restaurant')
+        if (preselected) {
+            setRestaurantId(preselected)
+        }
+
         const token = localStorage.getItem('token');
         const decoded = jwtDecode(token);
         setEmail(decoded.email);
