@@ -38,6 +38,14 @@ export default function RestaurantCard({ restaurant, onSelect }) {
     return (
         <Col sm={4} className="mb-4">
             <Card className="h-100 shadow-sm" style={{ cursor: "pointer" }} onClick={() => onSelect(restaurant)}>
+
+                {restaurant.image_url && (
+                    <Card.Img
+                        variant='top'
+                        src={restaurant.image_url}
+                        style={{ height: "150px", objectFit: "cover" }}
+                    />
+                )}
                 <Card.Body>
 
                     <Card.Title>{restaurant.name}</Card.Title>

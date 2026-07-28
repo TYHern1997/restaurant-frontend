@@ -23,6 +23,8 @@ export default function AdminPage() {
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const [imageUrl, setImageUrl] = useState('')
+    const imageFileRef = useRef(null)
 
     const [restaurantPage, setRestaurantPage] = useState(1);
     const [usersPage, setUsersPage] = useState(1);
@@ -78,7 +80,8 @@ export default function AdminPage() {
                     cuisine_type: cuisineType,
                     capacity: capacity ? parseInt(capacity) : null,
                     location,
-                    menu_url: menuUrl
+                    menu_url: menuUrl,
+                    image_url: imageUrl
                 }, { headers })
                 setSuccess('Restaurant updated successfully!')
             } else {
@@ -87,13 +90,15 @@ export default function AdminPage() {
                     cuisine_type: cuisineType,
                     capacity: capacity ? parseInt(capacity) : null,
                     location,
-                    menu_url: menuUrl
+                    menu_url: menuUrl,
+                    image_url: imageUrl
                 }, { headers });
                 setSuccess('Restaurant added successfully!')
             }
 
             setTimeout(() => setSuccess(''), 3000);
-            setName(''); setCuisineType(''); setCapacity(''); setLocation(''); setMenuUrl('');
+            setName(''); setCuisineType(''); setCapacity(''); setLocation('');
+            setMenuUrl(''); setImageUrl('');
             setEditingRestaurant(null);
             fetchRestaurants();
         } catch (err) {
@@ -109,6 +114,7 @@ export default function AdminPage() {
         setCapacity(restaurant.capacity || '');
         setLocation(restaurant.location || '');
         setMenuUrl(restaurant.menu_url || '');
+        setImageUrl(restaurant.image_url || '')
     };
 
     const handleDeleteRestaurant = async (id) => {
@@ -149,6 +155,18 @@ export default function AdminPage() {
 
     const totalUserPages = Math.ceil(users.length / itemsPerPage)
 
+    const handleImageUpload = async (file) => {
+        if (!file) return
+        try {
+            const storageRef = ref(storage, `restaurants/$Date.now()}_{file.name}`)
+            await uploadBytes(storageRef, file)
+            const url = await getDownloadURL(storageRef)
+            setImageUrl(url)
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     return (
         <div style={{ backgroundColor: "#f8f4f0", minHeight: "100vh" }}>
             <AppNavBar />
@@ -172,6 +190,31 @@ export default function AdminPage() {
                             <Form.Group className="mb-3">
                                 <Form.Label>Cuisine Type</Form.Label>
                                 <Form.Control value={cuisineType} onChange={(e) => setCuisineType(e.target.value)} placeholder="e.g. Italian" />
+                            </Form.Group>
+                        </Col>
+                        <Col sm={6}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Restaurant Image</Form.Label>
+                                <div className="d-flex gap-2 align-items-center">
+                                    <Form.Control
+                                        value={imageUrl}
+                                        onChange={(e) => setImageUrl(e.target.value)}
+                                        placeholder="Paste image URL or upload"
+                                    />
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        ref={imageFileRef}
+                                        style={{ display: "none" }}
+                                        onChange={(e) => handleImageUpload(e.target.files[0])}
+                                    />
+                                    <Button
+                                        variant="outline-secondary"
+                                        onClick={() => imageFileRef.current.click()}
+                                    >
+                                        📁
+                                    </Button>
+                                </div>
                             </Form.Group>
                         </Col>
                     </Row>
