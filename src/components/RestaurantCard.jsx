@@ -39,7 +39,21 @@ export default function RestaurantCard({ restaurant, onSelect }) {
         <Col sm={4} className="mb-4">
             <Card className="h-100 shadow-sm" style={{ cursor: "pointer" }} onClick={() => onSelect(restaurant)}>
                 <Card.Body>
+
                     <Card.Title>{restaurant.name}</Card.Title>
+
+                    <Card.Text>
+                        {restaurant.avg_rating ? (
+                            <>
+                                {"⭐".repeat(Math.round(restaurant.avg_rating))}
+                                {"☆".repeat(5 - Math.round(restaurant.avg_rating))}
+                                {" "}<strong>{restaurant.avg_rating}</strong>
+                                {" "}<span className="text-muted small">({restaurant.review_count} reviews)</span>
+                            </>
+                        ) : (
+                            <span className="text-muted small">No reviews yet</span>
+                        )}
+                    </Card.Text>
                     <Card.Text>
                         <strong>Cuisine:</strong> {restaurant.cuisine_type}
                     </Card.Text>
