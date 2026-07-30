@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
 import L from "leaflet"
+import { MdRestaurantMenu } from 'react-icons/md'
+import { BsMap } from 'react-icons/bs'
+import { FaMapMarkerAlt } from 'react-icons/fa'
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -77,33 +80,46 @@ export default function RestaurantCard({ restaurant, onSelect }) {
                         <strong>Cuisine:</strong> {restaurant.cuisine_type}
                     </Card.Text>
                     {restaurant.menu_url && (
-                        <a href={restaurant.menu_url}
-                            target="_blank"
-                            rel="noreferrer"
+                        <Button
+                            variant="outline-success"
+                            size="sm"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                window.open(restaurant.menu_url, '_blank')
+                            }}
                         >
-                            View Menu
-                        </a>
+                            <MdRestaurantMenu /> View Menu
+                        </Button>
                     )}
                     <Card.Text>
-                        <strong>Location:</strong>{" "}
+                        <strong>Location:</strong> {restaurant.location}{" "}
 
                         <a href={`https://www.google.com/maps/search/${restaurant.location}`}
                             target="_blank"
                             rel="noreferrer"
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            {restaurant.location}
+                            <FaMapMarkerAlt />
                         </a>
                     </Card.Text>
                     <Card.Text>
                         <strong>Capacity:</strong> {restaurant.capacity} guests
                     </Card.Text>
                     <div className="d-flex gap-3 mt-2">
-                        <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleCardClick(); }}>
+                        <Button
+                            variant='outline-primary'
+                            size="sm"
+                            onClick={(e) => { e.stopPropagation(); handleCardClick() }}
+                        >
                             View Reviews
-                        </a>
-                        <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMap(true); }}>
-                            Show on Map
-                        </a>
+                        </Button>
+                        <Button
+                            variant='outline-primary'
+                            size="sm"
+                            onClick={(e) => { e.stopPropagation(); setShowMap(true); }}
+                        >
+                            <BsMap /> Show on Map
+                        </Button>
                     </div>
                     <Button
                         variant="danger"
