@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { FaPencilAlt } from 'react-icons/fa'
+import { FaPencilAlt, FaCamera } from 'react-icons/fa'
 import { Card, Button, Form, Row, Col } from "react-bootstrap";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase";
@@ -111,7 +111,7 @@ export default function ReviewCard({ booking, existingReview, onSubmit, isEditin
                                         boxShadow: "0 1px 3px rgba(0,0,0,0.3)"
                                     }}
                                 >
-                                    +
+                                    <FaCamera size={12} color="#555" />
                                 </div>
                             )}
                         </div>
