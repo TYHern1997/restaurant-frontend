@@ -158,7 +158,7 @@ export default function AdminPage() {
     const handleImageUpload = async (file) => {
         if (!file) return
         try {
-            const storageRef = ref(storage, `restaurants/$Date.now()}_{file.name}`)
+            const storageRef = ref(storage, `restaurants/${Date.now()}_${file.name}`)
             await uploadBytes(storageRef, file)
             const url = await getDownloadURL(storageRef)
             setImageUrl(url)

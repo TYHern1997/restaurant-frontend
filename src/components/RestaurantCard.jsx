@@ -2,12 +2,23 @@ import { Card, Col, Button, Modal } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
+import "leaflet/dist/leaflet.css"
+import L from "leaflet"
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
 
 const API = "https://restaurant-backend-production-3168.up.railway.app";
 
 export default function RestaurantCard({ restaurant, onSelect }) {
     const [showModal, setShowModal] = useState(false);
     const [reviews, setReviews] = useState([]);
+    const [showMap, setShowMap] = useState(false)
     const navigate = useNavigate()
     const token = localStorage.getItem('token')
 
@@ -86,9 +97,14 @@ export default function RestaurantCard({ restaurant, onSelect }) {
                     <Card.Text>
                         <strong>Capacity:</strong> {restaurant.capacity} guests
                     </Card.Text>
-                    <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleCardClick(); }}>
-                        View Reviews
-                    </a>
+                    <div className="d-flex gap-3 mt-2">
+                        <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleCardClick(); }}>
+                            View Reviews
+                        </a>
+                        <a href="#" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMap(true); }}>
+                            Show on Map
+                        </a>
+                    </div>
                     <Button
                         variant="danger"
                         size="sm"
@@ -128,6 +144,36 @@ export default function RestaurantCard({ restaurant, onSelect }) {
                     <Button variant="secondary" onClick={() => setShowModal(false)}>
                         Close
                     </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showMap} onHide={() => setShowMap(false)} centered size='lg'>
+                <Modal.Header closeButton>
+                    <Modal.Title>{restaurant.name} - Location</Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={{ height: "400px", padding: 0 }}>
+                    {restaurant.lat && restaurant.lng ? (
+                        <MapContainer
+                            center={[parseFloat(restaurant.lat), parseFloat(restaurant.lng)]}
+                            zoom={16}
+                            style={{ height: "100%", width: "100%" }}
+                        >
+                            <TileLayer
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+                            />
+                            <Marker position={[parseFloat(restaurant.lat), parseFloat(restaurant.lng)]}>
+                                <Popup>
+                                    <strong>{restaurant.name}</strong><br />
+                                    {restaurant.cuisine_type}
+                                </Popup>
+                            </Marker>
+                        </MapContainer>
+                    ) : (
+                        <p className="text-center mt-3">No location available for this restaurant.</p>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowMap(false)}>Close</Button>
                 </Modal.Footer>
             </Modal>
         </Col>
