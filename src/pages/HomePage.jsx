@@ -64,7 +64,7 @@ export default function HomePage() {
                 <RestaurantMap restaurants={restaurants} />
 
                 <h2 className="text-center mb-4 mt-5">What Our Customer Say</h2>
-                <Row>
+                <Row className="g-3">
                     {recentReviews.map((review) => (
                         <Col sm={4} key={review.id} className="mb=4">
                             <Card className="h-100 shadow-sm">
