@@ -159,20 +159,20 @@ export default function BookingForm({
                         </Form.Group>
                     </Col>
                 </Row>
-
-                <Button type="submit" variant="primary">
-                    {editingId ? "Update" : "Book Now"}
-                </Button>
-
-                {editingId && (
-                    <Button
-                        variant="outline-secondary"
-                        className="rounded-pill"
-                        onClick={handleCancelEdit}
-                    >
-                        Cancel
+                <div className="d-flex gap-2">
+                    <Button type="submit" variant="primary">
+                        {editingId ? "Update" : "Book Now"}
                     </Button>
-                )}
+
+                    {editingId && (
+                        <Button
+                            variant="outline-secondary"
+                            onClick={handleCancelEdit}
+                        >
+                            Cancel
+                        </Button>
+                    )}
+                </div>
             </Form>
         </>
     );

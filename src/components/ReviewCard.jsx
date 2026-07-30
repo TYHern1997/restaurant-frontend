@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { FaPencilAlt } from 'react-icons/fa'
 import { Card, Button, Form, Row, Col } from "react-bootstrap";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase";
@@ -121,7 +122,7 @@ export default function ReviewCard({ booking, existingReview, onSubmit, isEditin
                             <h5>{booking.restaurant_name}</h5>
                             {existingReview && (
                                 <Button variant="link" size="sm" onClick={onEditToggle}>
-                                    ✏️
+                                    <FaPencilAlt />
                                 </Button>
                             )}
                         </div>
@@ -144,16 +145,7 @@ export default function ReviewCard({ booking, existingReview, onSubmit, isEditin
                                     onChange={handleImageUpload}
                                 />
 
-                                {/* Display uploaded image if exists */}
-                                {/* {existingReview.image_url && (
-                                    <div className="mt-2">
-                                        <img
-                                            src={existingReview.image_url}
-                                            alt="review"
-                                            style={{ width: "100%", borderRadius: "8px", maxHeight: "200px", objectFit: "cover" }}
-                                        />
-                                    </div>
-                                )} */}
+
                             </div>
                         )}
 

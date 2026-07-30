@@ -1,4 +1,5 @@
 import { Row, Col, Card, Button } from "react-bootstrap"
+import { FaCheck, FaEdit, FaTrash } from 'react-icons/fa'
 
 export default function BookingList({ bookings, handleEdit, handleDelete, handleVisited }) {
     return (
@@ -15,7 +16,7 @@ export default function BookingList({ bookings, handleEdit, handleDelete, handle
                                         title="Mark as visited"
                                         onClick={() => handleVisited(booking.id)}
                                     >
-                                        ✅
+                                        <FaCheck />
                                     </Button>
                                 )}
                             </div>
@@ -53,14 +54,14 @@ export default function BookingList({ bookings, handleEdit, handleDelete, handle
                                 className="me-2 rounded-pill"
                                 onClick={() => handleEdit(booking)}
                             >
-                                Edit
+                                <FaEdit /> Edit
                             </Button>
                             <Button
                                 variant="outline-danger"
                                 className="rounded-pill"
                                 onClick={() => handleDelete(booking.id)}
                             >
-                                Delete
+                                <FaTrash />  Delete
                             </Button>
                         </Card.Body>
                     </Card>

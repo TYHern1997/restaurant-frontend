@@ -1,4 +1,5 @@
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { MdRestaurantMenu } from 'react-icons/md'
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
@@ -17,7 +18,7 @@ export default function AppNavBar() {
         <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
             <Container>
                 <Navbar.Brand href="/">
-                    🍽️ Sigma Serve
+                    <MdRestaurantMenu /> Sigma Serve
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-nacbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">

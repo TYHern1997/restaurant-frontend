@@ -6,6 +6,7 @@ import axios from "axios"
 import { Container, Image, Form, Row, Col } from "react-bootstrap"
 import AppNavBar from "../components/NavBar"
 import ReviewCard from "../components/ReviewCard";
+import { FaPencilAlt } from 'react-icons/fa'
 import Footer from "../components/Footer";
 
 const API = "https://restaurant-backend-production-3168.up.railway.app"
@@ -221,11 +222,16 @@ export default function ProfilePage() {
                                         cursor: "pointer",
                                         backgroundColor: "white",
                                         borderRadius: "50%",
-                                        padding: "4px",
-                                        fontSize: "1rem"
+                                        padding: "6px",
+                                        width: "32px",
+                                        height: "32px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        boxShadow: "0 1px 3px rgba(0,0,0,0.3)"
                                     }}
                                 >
-                                    ✏️
+                                    <FaPencilAlt color="coral" />
                                 </div>
                             </div>
 
