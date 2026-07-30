@@ -23,6 +23,7 @@ export default function AppNavBar() {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
                         <Nav.Link href="/">Home</Nav.Link>
+                        <Nav.Link href="/restaurants">Our Selection</Nav.Link>
 
                         {token && (
                             <>

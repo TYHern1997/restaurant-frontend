@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import MyBookingsPage from './pages/MyBookingsPage';
 import AdminPage from './pages/AdminPage';
 import ProfilePage from './pages/ProfilePage';
+import RestaurantPage from "./pages/RestaurantPage";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/bookings" element={<BookingsPage />} />
         <Route path="/my-bookings" element={<MyBookingsPage />} />
         <Route path="/signup" element={<AuthPage startAsSignup={true} />} />
+        <Route path="/restaurants" element={<RestaurantPage />} />
       </Routes>
     </BrowserRouter>
   )
