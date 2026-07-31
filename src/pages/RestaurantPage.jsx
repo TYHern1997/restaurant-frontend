@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Container, Row } from "react-bootstrap";
+import { Container, Row, Button } from "react-bootstrap";
 import axios from "axios"
 import AppNavBar from "../components/NavBar";
 import RestaurantCard from "../components/RestaurantCard";
 import Footer from "../components/Footer";
+import { SiLeaderprice } from "react-icons/si";
 
 const API = 'https://restaurant-backend-production-3168.up.railway.app'
 
@@ -14,10 +15,13 @@ export default function RestaurantPage() {
     const [selectedRestaurant, setSelectedRestaurant] = useState(null)
     const [ratingFilter, setRatingFilter] = useState('All')
     const [capacityFilter, setCapacityFilter] = useState('All')
+    const [priceFilter, setPriceFilter] = useState('All')
 
     useEffect(() => {
         fetchRestaurants()
     }, [])
+
+
 
     const fetchRestaurants = async () => {
         try {
@@ -36,7 +40,8 @@ export default function RestaurantPage() {
         const matchCuisine = cuisineFilter === 'All' || r.cuisine_type === cuisineFilter
         const matchRating = ratingFilter === 'All' || (r.avg_rating && parseFloat(r.avg_rating) >= parseFloat(ratingFilter))
         const matchCapacity = capacityFilter === 'All' || r.capacity >= parseInt(capacityFilter)
-        return matchSearch && matchCuisine && matchRating && matchCapacity
+        const matchPrice = priceFilter === 'All' || restaurant.price_range === priceFilter
+        return matchSearch && matchCuisine && matchRating && matchCapacity && matchPrice
     })
 
     return (
@@ -80,13 +85,30 @@ export default function RestaurantPage() {
                         value={capacityFilter}
                         onChange={(e) => setCapacityFilter(e.target.value)}
                     >
-                        <option value="All">Any Capacity</option>
-                        <option value="30">30+ guests</option>
-                        <option value="50">50+ guests</option>
-                        <option value="100">100+ guests</option>
+                        <option value="All">Any Price</option>
+                        <option value="$">$ — Under RM50</option>
+                        <option value="$$">$$ — RM50 to RM150</option>
+                        <option value="$$$">$$$ — Above RM150</option>
                     </select>
 
+
+
+                    <Button
+                        variant="outline-danger"
+                        size='sm'
+                        onClick={() => {
+                            setSearch('')
+                            setCuisineFilter('All')
+                            setRatingFilter('All')
+                            setCapacityFilter('All')
+                            setPriceFilter('All')
+                        }}
+                    >
+                        Clear Filter
+                    </Button>
                 </div>
+
+
 
                 <Row>
                     {filtered.map(restaurant => (

@@ -24,6 +24,7 @@ export default function AdminPage() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const [imageUrl, setImageUrl] = useState('')
+    const [priceRange, setPriceRange] = useState('')
     const imageFileRef = useRef(null)
 
     const [restaurantPage, setRestaurantPage] = useState(1);
@@ -81,7 +82,8 @@ export default function AdminPage() {
                     capacity: capacity ? parseInt(capacity) : null,
                     location,
                     menu_url: menuUrl,
-                    image_url: imageUrl
+                    image_url: imageUrl,
+                    price_range: priceRange
                 }, { headers })
                 setSuccess('Restaurant updated successfully!')
             } else {
@@ -91,7 +93,8 @@ export default function AdminPage() {
                     capacity: capacity ? parseInt(capacity) : null,
                     location,
                     menu_url: menuUrl,
-                    image_url: imageUrl
+                    image_url: imageUrl,
+                    price_range: priceRange
                 }, { headers });
                 setSuccess('Restaurant added successfully!')
             }
@@ -99,6 +102,7 @@ export default function AdminPage() {
             setTimeout(() => setSuccess(''), 3000);
             setName(''); setCuisineType(''); setCapacity(''); setLocation('');
             setMenuUrl(''); setImageUrl('');
+            setPriceRange('')
             setEditingRestaurant(null);
             fetchRestaurants();
         } catch (err) {
@@ -114,7 +118,8 @@ export default function AdminPage() {
         setCapacity(restaurant.capacity || '');
         setLocation(restaurant.location || '');
         setMenuUrl(restaurant.menu_url || '');
-        setImageUrl(restaurant.image_url || '')
+        setImageUrl(restaurant.image_url || '');
+        setPriceRange(restaurant.price_range || '')
     };
 
     const handleDeleteRestaurant = async (id) => {
@@ -250,12 +255,28 @@ export default function AdminPage() {
                                 <Form.Control type="number" value={capacity} onChange={(e) => setCapacity(e.target.value)} placeholder="e.g. 50" />
                             </Form.Group>
                         </Col>
-                        <Col sm={6}>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Location</Form.Label>
-                                <Form.Control value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. KLCC, Kuala Lumpur" />
-                            </Form.Group>
-                        </Col>
+                        <Row>
+                            <Col sm={6}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Location</Form.Label>
+                                    <Form.Control value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. KLCC, Kuala Lumpur" />
+                                </Form.Group>
+                            </Col>
+                            <Col sm={6}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Price Range</Form.Label>
+                                    <Form.Select
+                                        value={priceRange}
+                                        onChange={(e) => setPriceRange(e.target.value)}
+                                    >
+                                        <option value="">Select price range...</option>
+                                        <option value="$">$ — Under RM50</option>
+                                        <option value="$$">$$ — RM50 to RM150</option>
+                                        <option value="$$$">$$$ — Above RM150</option>
+                                    </Form.Select>
+                                </Form.Group>
+                            </Col>
+                        </Row>
                     </Row>
                     <Button type="submit" variant="danger" className="rounded-pill">{editingRestaurant ? "Update Restaurant" : "Add Restaurant"}</Button>
                     {editingRestaurant && (

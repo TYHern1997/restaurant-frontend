@@ -1,4 +1,4 @@
-import { Card, Col, Button, Modal } from "react-bootstrap";
+import { Card, Col, Button, Modal, Row } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -76,9 +76,19 @@ export default function RestaurantCard({ restaurant, onSelect }) {
                             <span className="text-muted small">No reviews yet</span>
                         )}
                     </Card.Text>
-                    <Card.Text>
-                        <strong>Cuisine:</strong> {restaurant.cuisine_type}
-                    </Card.Text>
+
+                    <div className="d-flex justify-content-between alighn-itmes-center mb-2">
+                        <span><strong>Cuisine:</strong> {restaurant.cuisine_type}</span>
+                        {restaurant.price_range && (
+                            <span className="text-muted small">
+                                {restaurant.price_range === '$' && '$ · Under RM50'}
+                                {restaurant.price_range === '$$' && '$$ · RM50–RM150'}
+                                {restaurant.price_range === '$$$' && '$$$ · Above RM150'}
+                            </span>
+                        )}
+                    </div>
+
+
                     {restaurant.menu_url && (
                         <Button
                             variant="outline-success"
