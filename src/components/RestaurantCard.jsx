@@ -1,4 +1,4 @@
-import { Card, Col, Button, Modal, Row } from "react-bootstrap";
+import { Card, Col, Button, Modal, Row, Carousel } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +24,8 @@ export default function RestaurantCard({ restaurant, onSelect }) {
     const [showMap, setShowMap] = useState(false)
     const navigate = useNavigate()
     const token = localStorage.getItem('token')
+    const [viewerImages, setViewerImages] = useState([])
+    const [viewerIndex, setViewerIndex] = useState(null)
 
     const fetchReviews = async () => {
         try {
@@ -155,12 +157,36 @@ export default function RestaurantCard({ restaurant, onSelect }) {
                                 <strong>{review.first_name}</strong>
                                 <p>{"⭐".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</p>
                                 <p>{review.comment}</p>
-                                {review.image_url && (
-                                    <img
-                                        src={review.image_url}
-                                        alt="review"
-                                        style={{ width: "100%", borderRadius: "8px", maxHeight: "150px", objectFit: "cover" }}
-                                    />
+
+
+                                {review.images && review.images.length > 0 && (
+                                    <div style={{
+                                        display: "flex",
+                                        gap: "8px",
+                                        overflowX: 'auto',
+                                        paddingBottom: '8px'
+                                    }}>
+                                        {review.images.map((img, index) => (
+                                            <img
+                                                key={img.id}
+                                                src={img.image_url}
+                                                alt="review"
+                                                onClick={() => {
+                                                    setViewerImages(review.images)
+                                                    setViewerIndex(index)
+                                                }}
+                                                style={{
+                                                    height: "80px",
+                                                    width: "80px",
+                                                    objectFit: "cover",
+                                                    borderRadius: "8px",
+                                                    flexShrink: 0,
+                                                    cursor: "pointer"
+                                                }}
+                                            />
+                                        ))}
+
+                                    </div>
                                 )}
                             </div>
                         ))
@@ -172,6 +198,42 @@ export default function RestaurantCard({ restaurant, onSelect }) {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            <Modal
+                show={viewerIndex !== null}
+                onHide={() => setViewerIndex(null)}
+                centered
+                size="lg"
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Photos</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="p-0">
+                    {viewerImages.length > 0 && (
+                        <Carousel
+                            activeIndex={viewerIndex}
+                            onSelect={(i) => setViewerIndex(i)}
+                            interval={null}
+                        >
+                            {viewerImages.map((img) => (
+                                <Carousel.Item key={img.id}>
+                                    <img
+                                        src={img.image_url}
+                                        alt='review'
+                                        style={{ width: "100%", maxHeight: "400px", objectFit: "cover" }}
+                                    />
+                                </Carousel.Item>
+                            ))}
+                        </Carousel>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setViewerIndex(null)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
             <Modal show={showMap} onHide={() => setShowMap(false)} centered size='lg'>
                 <Modal.Header closeButton>
                     <Modal.Title>{restaurant.name} - Location</Modal.Title>
