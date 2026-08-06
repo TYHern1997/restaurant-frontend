@@ -17,7 +17,7 @@ export default function MyBookingsPage() {
         try {
             const token = localStorage.getItem('token');
             console.log('token:', token);
-            const res = await axios.get('https://restaurant-backend-production-3168.up.railway.app/bookings', {
+            const res = await axios.get('https://restaurant-backend-jv5m.onrender.com/bookings', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             console.log('bookings data:', res.data);
