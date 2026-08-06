@@ -56,7 +56,7 @@ export default function BookingsPage() {
     }, []);
     const fetchRestaurants = async () => {
         try {
-            const res = await axios.get('https://restaurant-backend-production-3168.up.railway.app/restaurants');
+            const res = await axios.get('https://restaurant-backend-jv5m.onrender.com/restaurants');
             setRestaurants(res.data);
         } catch (err) {
             console.error(err);
@@ -66,7 +66,7 @@ export default function BookingsPage() {
     const fetchBookings = async () => {
         const token = localStorage.getItem('token');
         try {
-            const res = await axios.get('https://restaurant-backend-production-3168.up.railway.app/bookings', {
+            const res = await axios.get('https://restaurant-backend-jv5m.onrender.com/bookings', {
                 headers: { Authorization: `Bearer ${token}` }
             })
             setBookings(res.data)

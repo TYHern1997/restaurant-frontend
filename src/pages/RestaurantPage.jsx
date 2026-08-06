@@ -6,7 +6,7 @@ import RestaurantCard from "../components/RestaurantCard";
 import Footer from "../components/Footer";
 import { SiLeaderprice } from "react-icons/si";
 
-const API = 'https://restaurant-backend-production-3168.up.railway.app'
+const API = 'https://restaurant-backend-jv5m.onrender.com'
 
 export default function RestaurantPage() {
     const [restaurants, setRestaurants] = useState([])

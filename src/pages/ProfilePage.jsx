@@ -9,7 +9,7 @@ import ReviewCard from "../components/ReviewCard";
 import { FaPencilAlt } from 'react-icons/fa'
 import Footer from "../components/Footer";
 
-const API = "https://restaurant-backend-production-3168.up.railway.app"
+const API = "https://restaurant-backend-jv5m.onrender.com"
 
 export default function ProfilePage() {
     const [profilePic, setProfilePic] = useState(null)

@@ -16,7 +16,7 @@ L.Icon.Default.mergeOptions({
     shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-const API = "https://restaurant-backend-production-3168.up.railway.app";
+const API = "https://restaurant-backend-jv5m.onrender.com";
 
 export default function RestaurantCard({ restaurant, onSelect }) {
     const [showModal, setShowModal] = useState(false);

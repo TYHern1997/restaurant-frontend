@@ -4,7 +4,7 @@ import { Card, Button, Form, Row, Col, Carousel, Modal } from "react-bootstrap";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase";
 import axios from "axios"
-const API = "https://restaurant-backend-production-3168.up.railway.app"
+const API = "https://restaurant-backend-jv5m.onrender.com"
 
 export default function ReviewCard({ booking, existingReview, onSubmit, isEditing, onEditToggle, onImageUpload }) {
     const [rating, setRating] = useState(existingReview?.rating || 0);

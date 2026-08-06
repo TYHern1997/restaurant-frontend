@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Container, Table, Button, Form, Row, Col, Alert } from "react-bootstrap";
+import { Container, Table, Button, Form, Row, Col, Alert, Badge } from "react-bootstrap";
 import AppNavBar from "../components/NavBar";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +9,22 @@ import Footer from "../components/Footer";
 import { storage } from "../firebase";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 
-const API = "https://restaurant-backend-production-3168.up.railway.app";
+const API = "https://restaurant-backend-jv5m.onrender.com";
+
+const getRoleBadge = (role) => {
+    const variants = {
+        admin: 'danger',
+        owner: 'warning',
+        user: 'secondary'
+    };
+
+    const labels = {
+        admin: 'Admin',
+        owner: 'Owner',
+        user: 'Diner'
+    }
+    return <Badge bg={variants[role] || 'secondary'}>{labels[role] || role}</Badge>
+}
 
 export default function AdminPage() {
     const [users, setUsers] = useState([]);
@@ -25,6 +40,7 @@ export default function AdminPage() {
     const navigate = useNavigate();
     const [imageUrl, setImageUrl] = useState('')
     const [priceRange, setPriceRange] = useState('')
+    const [roleFilter, setRoleFilter] = useState('All')
     const imageFileRef = useRef(null)
 
     const [restaurantPage, setRestaurantPage] = useState(1);
@@ -153,12 +169,16 @@ export default function AdminPage() {
 
     const totalRestaurantPages = Math.ceil(restaurants.length / itemsPerPage);
 
-    const paginatedUsers = users.slice(
+    const filteredUsers = roleFilter === 'All'
+        ? users
+        : users.filter(u => u.role === roleFilter)
+
+    const paginatedUsers = filteredUsers.slice(
         (usersPage - 1) * itemsPerPage,
         usersPage * itemsPerPage
     )
 
-    const totalUserPages = Math.ceil(users.length / itemsPerPage)
+    const totalUserPages = Math.ceil(filteredUsers.length / itemsPerPage)
 
     const handleImageUpload = async (file) => {
         if (!file) return
@@ -171,6 +191,8 @@ export default function AdminPage() {
             console.error(err)
         }
     }
+
+
 
     return (
         <div style={{ backgroundColor: "#f8f4f0", minHeight: "100vh" }}>
@@ -265,14 +287,11 @@ export default function AdminPage() {
                             <Col sm={6}>
                                 <Form.Group className="mb-3">
                                     <Form.Label>Price Range</Form.Label>
-                                    <Form.Select
-                                        value={priceRange}
-                                        onChange={(e) => setPriceRange(e.target.value)}
-                                    >
+                                    <Form.Select value={priceRange} onChange={(e) => setPriceRange(e.target.value)}>
                                         <option value="">Select price range...</option>
-                                        <option value="$">$ — Under RM50</option>
-                                        <option value="$$">$$ — RM50 to RM150</option>
-                                        <option value="$$$">$$$ — Above RM150</option>
+                                        <option value="$">$</option>
+                                        <option value="$$">$$</option>
+                                        <option value="$$$">$$$</option>
                                     </Form.Select>
                                 </Form.Group>
                             </Col>
@@ -353,7 +372,22 @@ export default function AdminPage() {
 
 
                 {/* Users Table */}
-                <h4 className="mt-5">All Users</h4>
+
+                <div className="d-flex mt-5 justify-content-between align-items-center">
+                    <h4 className="mb-0">Roles</h4>
+                    <Form.Select
+                        style={{ maxWidth: "200px" }}
+                        value={roleFilter}
+                        onChange={(e) => {
+                            setRoleFilter(e.target.value);
+                            setUsersPage(1);
+                        }}>
+                        <option value="All">All Roles</option>
+                        <option value="user">Diner</option>
+                        <option value="owner">Owner</option>
+                        <option value="admin">Admin</option>
+                    </Form.Select>
+                </div>
                 <Table striped bordered hover responsive className="mt-3">
                     <thead>
                         <tr>
@@ -367,7 +401,7 @@ export default function AdminPage() {
                             <tr key={u.id}>
                                 <td>{u.id}</td>
                                 <td>{u.email}</td>
-                                <td>{u.role}</td>
+                                <td>{getRoleBadge(u.role)}</td>
                             </tr>
                         ))}
                     </tbody>

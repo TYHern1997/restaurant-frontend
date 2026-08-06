@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { FaUtensils, FaStore } from "react-icons/fa";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -12,6 +13,7 @@ export default function AuthPage({ startAsSignup = false }) {
     const [lastName, setLastName] = useState('');
     const [birthday, setBirthday] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [role, setRole] = useState('user'); // Default role is 'user'
 
 
     const [error, setError] = useState('');
@@ -49,15 +51,16 @@ export default function AuthPage({ startAsSignup = false }) {
                 first_name: firstName,
                 last_name: lastName,
                 birthday,
-                phone_number: phoneNumber
+                phone_number: phoneNumber,
+                role
             };
 
         try {
-            const res = await axios.post(`https://restaurant-backend-production-3168.up.railway.app${endpoint}`, payload);
+            const res = await axios.post(`https://restaurant-backend-jv5m.onrender.com${endpoint}`, payload);
 
             if (isLogin) {
                 localStorage.setItem('token', res.data.token);
-                navigate('/my-bookings');;
+                navigate('/my-bookings');
             } else {
                 setFirstName('');
                 setLastName('');
@@ -76,10 +79,34 @@ export default function AuthPage({ startAsSignup = false }) {
             <Container style={{ maxWidth: "550px" }}>
                 <div style={formCardStyle}>
                     <h2 className="mb-4 text-center fw-bold">{isLogin ? 'Login' : 'Sign Up'}</h2>
+
+
+
                     <Form onSubmit={handleSubmit}>
 
                         {!isLogin && (
                             <>
+                                <Form.Group className="mb-4">
+                                    <Form.Label className="d-block">Sign up as</Form.Label>
+                                    <div className="d-flex gap-2">
+                                        <Button
+                                            variant={role === 'user' ? 'danger' : 'outline-danger'}
+                                            className="rounded-pill flex-fill"
+                                            onClick={() => setRole('user')}
+                                            type="button"
+                                        >
+                                            <FaUtensils /> Diner
+                                        </Button>
+                                        <Button
+                                            variant={role === 'owner' ? 'danger' : 'outline-danger'}
+                                            className="rounded-pill flex-fill"
+                                            onClick={() => setRole('owner')}
+                                            type="button"
+                                        >
+                                            <FaStore /> Restaurant Owner
+                                        </Button>
+                                    </div>
+                                </Form.Group>
                                 <Row>
                                     <Col md={6}>
                                         <Form.Group className="mb-3">

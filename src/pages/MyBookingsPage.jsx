@@ -49,7 +49,7 @@ export default function MyBookingsPage() {
         try {
             const token = localStorage.getItem('token');
             await axios.put(
-                `https://restaurant-backend-production-3168.up.railway.app/bookings/${id}/visited`,
+                `https://restaurant-backend-jv5m.onrender.com/bookings/${id}/visited`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
