@@ -109,7 +109,7 @@ export default function BookingsPage() {
                     user_id: decoded.id
                 });
 
-                await axios.put(`https://restaurant-backend-production-3168.up.railway.app/bookings/${editingId}`, {
+                await axios.put(`https://restaurant-backend-jv5m.onrender.com/bookings/${editingId}`, {
                     title, description, date: formattedDate, time,
                     phone_number: phoneNumber,
                     email, restaurant_id: restaurantId,
@@ -122,7 +122,7 @@ export default function BookingsPage() {
                 navigate('/my-bookings');
             } else {
 
-                await axios.post("https://restaurant-backend-production-3168.up.railway.app/bookings", {
+                await axios.post("https://restaurant-backend-jv5m.onrender.com/bookings", {
                     title, description, date: formattedDate, time,
                     phone_number: phoneNumber,
                     email, restaurant_id: restaurantId,
@@ -156,7 +156,7 @@ export default function BookingsPage() {
     const handleDelete = async (id) => {
         const token = localStorage.getItem('token');
         try {
-            await axios.delete(`https://restaurant-backend-production-3168.up.railway.app/bookings/${id}`, {
+            await axios.delete(`https://restaurant-backend-jv5m.onrender.com/bookings/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
             setSuccess('Booking deleted successfully')
