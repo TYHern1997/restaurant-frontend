@@ -41,6 +41,7 @@ export default function AdminPage() {
     const [imageUrl, setImageUrl] = useState('')
     const [priceRange, setPriceRange] = useState('')
     const [roleFilter, setRoleFilter] = useState('All')
+    const [pendingRequests, setPendingRequests] = useState([])
     const imageFileRef = useRef(null)
 
     const [restaurantPage, setRestaurantPage] = useState(1);
@@ -59,6 +60,7 @@ export default function AdminPage() {
 
         fetchUsers();
         fetchRestaurants();
+        fetchPendingRequests();
     }, []);
 
     const token = localStorage.getItem('token');
@@ -192,6 +194,27 @@ export default function AdminPage() {
         }
     }
 
+    const fetchPendingRequests = async () => {
+        try {
+            const res = await axios.get(`${API}/admin/restaurant-requests`, { headers });
+            setPendingRequests(res.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const handleRequestAction = async (id, status) => {
+        try {
+            await axios.put(`${API}/admin/restaurant-requests/${id}`, { status }, { headers });
+            setSuccess(`Restaurant ${status}!`);
+            setTimeout(() => setSuccess(''), 3000);
+            fetchPendingRequests();
+            fetchRestaurants(); // refresh main list too, in case approved
+        } catch (err) {
+            setError(err.response?.data?.error || 'Something went wrong');
+            setTimeout(() => setError(''), 3000);
+        }
+    };
 
 
     return (
@@ -369,7 +392,47 @@ export default function AdminPage() {
                     </Button>
                 </div>
 
-
+                {/* Pending Restaurant Requests */}
+                <h4 className="mt-5">Pending Restaurant Requests</h4>
+                {pendingRequests.length === 0 ? (
+                    <p className="text-muted mt-3">No pending requests.</p>
+                ) : (
+                    <Table striped bordered hover responsive className="mt-3">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Cuisine</th>
+                                <th>Capacity</th>
+                                <th>Location</th>
+                                <th>Owner Email</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pendingRequests.map((r) => (
+                                <tr key={r.id}>
+                                    <td>{r.id}</td>
+                                    <td>{r.name}</td>
+                                    <td>{r.cuisine_type}</td>
+                                    <td>{r.capacity}</td>
+                                    <td>{r.location}</td>
+                                    <td>{r.owner_email}</td>
+                                    <td>
+                                        <div className="d-flex gap-2">
+                                            <Button variant="outline-success" size="sm" onClick={() => handleRequestAction(r.id, 'approved')}>
+                                                Approve
+                                            </Button>
+                                            <Button variant="outline-danger" size="sm" onClick={() => handleRequestAction(r.id, 'rejected')}>
+                                                Reject
+                                            </Button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                )}
 
                 {/* Users Table */}
 

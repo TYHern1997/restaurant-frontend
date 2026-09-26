@@ -7,6 +7,7 @@ import MyBookingsPage from './pages/MyBookingsPage';
 import AdminPage from './pages/AdminPage';
 import ProfilePage from './pages/ProfilePage';
 import RestaurantPage from "./pages/RestaurantPage";
+import OwnerDashboardPage from './pages/OwnerDashboard'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/my-bookings" element={<MyBookingsPage />} />
         <Route path="/signup" element={<AuthPage startAsSignup={true} />} />
         <Route path="/restaurants" element={<RestaurantPage />} />
+        <Route path="/my-restaurant" element={<OwnerDashboardPage />} />
       </Routes>
     </BrowserRouter>
   )

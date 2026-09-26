@@ -40,7 +40,7 @@ export default function RestaurantPage() {
         const matchCuisine = cuisineFilter === 'All' || r.cuisine_type === cuisineFilter
         const matchRating = ratingFilter === 'All' || (r.avg_rating && parseFloat(r.avg_rating) >= parseFloat(ratingFilter))
         const matchCapacity = capacityFilter === 'All' || r.capacity >= parseInt(capacityFilter)
-        const matchPrice = priceFilter === 'All' || restaurant.price_range === priceFilter
+        const matchPrice = priceFilter === 'All' || r.price_range === priceFilter
         return matchSearch && matchCuisine && matchRating && matchCapacity && matchPrice
     })
 
@@ -55,7 +55,7 @@ export default function RestaurantPage() {
                         style={{ maxWidth: "300px" }}
                         placeholder="Search restaurants..."
                         value={search}
-                        onChange={(e) => setCuisineFilter(e.target.value)}
+                        onChange={(e) => setSearch(e.target.value)}
                     />
                     <select
                         className="form-select"
